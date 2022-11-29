@@ -1,0 +1,42 @@
+{
+  "name": "lafyun-plugin",
+  "version": "1.0.0",
+  "description": "改善lafyun开发体验的插件",
+  "author": "youmeng",
+  "private": true,
+  "main": "/src/main.js",
+  "keywords": [
+    "tampermonkey",
+    "lafyun"
+  ],
+  "scripts": {
+    "dev": "dotenv -e .env.dev -- webpack-dev-server --open --config webpack.dev.js",
+    "build": "dotenv -e .env -- webpack --config webpack.prod.js && dotenv -e .env -- node build.js",
+    "build:dev": "dotenv -e .env.dev -- webpack --config webpack.prod.js && dotenv -e .env.dev -- node build.js"
+  },
+  "license": "MIT",
+  "devDependencies": {
+    "clean-webpack-plugin": "^3.0.0",
+    "css-loader": "^5.0.1",
+    "dotenv-cli": "^4.0.0",
+    "file-loader": "^6.2.0",
+    "html-webpack-plugin": "^4.5.0",
+    "style-loader": "^2.0.0",
+    "vue-loader": "^15.9.5",
+    "vue-template-compiler": "^2.6.12",
+    "webpack": "^4.44.2",
+    "webpack-cli": "^3.3.11",
+    "webpack-dev-server": "^3.11.0",
+    "webpack-merge": "^5.4.0"
+  },
+  "dependencies": {
+    "axios": "^0.21.0",
+    "element-ui": "^2.14.1",
+    "less": "^4.1.3",
+    "less-loader": "7.2.0",
+    "vue": "^2.6.12",
+    "vue-clipboard2": "^0.3.3",
+    "web-storage-cache": "^1.1.1",
+    "vue-router":"^3.5.2"
+  }
+}
