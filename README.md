@@ -6,6 +6,15 @@
 
 安装Tampermonkey插件后，可以点击插件选择`添加新脚本`，然后复制粘贴当前项目下`dist/tampermonkey-vue.user.js`的代码，`Ctrl+S`保存后，刷新浏览器即可预览效果。
 
+## 使用方法
+新建Tampermonkey脚本，将`dist`目录下的`tampermonkey-vue.user.js`文件内容，复制粘贴至脚本内保存。
+
+修改第20行为自己的域名
+```js
+- // @match        https://console.wendiaodiao.com/app-console/*
++ // @match        https://you-domain/app-console/*
+```
+
 ## 配置
 
 ### 本地开发

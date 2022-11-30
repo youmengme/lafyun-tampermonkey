@@ -1,171 +1,196 @@
 <template>
-  <div
-    class="box plan"
-    :class="{
+  <div>
+    <div
+      class="box plan"
+      :class="{
       show: open,
       hide: !open,
     }"
-  >
-    <div
-      class="openBox"
-      @click="toggle"
-      v-if="!open"
     >
-      展开
-    </div>
+      <div
+        class="openBox"
+        @click="toggle"
+        v-if="!open"
+      >
+        展开
+      </div>
 
-    <div class="content">
-      <div class="title">
-        lafyun
-        <div
-          class="closeBox"
-          @click="toggle"
-        >
-          隐藏
-        </div>
-      </div>
-      <div class="group">
-        <div class="group-title">
-          Collection
-        </div>
-        <div
-          class="group-body"
-          v-if="collections.length"
-        >
+      <div class="content">
+        <div class="title">
+          lafyun开发助手
           <div
-            class="group-item"
-            v-for="item in collections"
+            class="closeBox"
+            @click="toggle"
           >
-            <div class="labelBox">
-              <router-link
-                class="label"
-                tag="span"
-                :to="{ path: `/app-console/#/app/68mhpf/cloudfunction/functions/${item._id}` }"
-              >
-                {{ item.label }}
-              </router-link>
-              <div
-                class="collection"
-                @click="onCollectClick(item)"
-              >
-                取消收藏
-              </div>
-            </div>
-            <div class="nameBox">
-              {{ item.name }}
-            </div>
+            隐藏
           </div>
         </div>
-        <el-empty
-          class="empty"
-          image-size='80'
-          description="暂无收藏"
-          v-else
-        />
-      </div>
-      <div class="group">
-        <div class="group-title">
-          <div class="group-name">
-            Functions
+        <div class="group">
+          <div class="group-title">
+            Collection
           </div>
-          <el-input
-            placeholder="请输入关键词"
-            prefix-icon="el-icon-search"
-            class="group-action"
-            v-model="functionKeyword"
-            @input="filterFunctions"
-          >
-          </el-input>
-        </div>
-        <div
-          class="group-body"
-          v-if="displayFunctions.length"
-        >
           <div
-            class="group-item"
-            v-for="item in displayFunctions"
+            class="group-body"
+            v-if="collections.length"
           >
             <div
-              class="labelBox"
-              @click="onFunctionClick(item)"
+              class="group-item"
+              v-for="item in collections"
             >
-              <router-link
-                class="label"
-                tag="span"
-                :to="{ path: `/app-console/#/app/68mhpf/cloudfunction/functions/${item._id}` }"
-              >
-                {{ item.label }}
-              </router-link>
               <div
-                class="collection"
-                @click="onCollectClick(item)"
+                class="labelBox"
+                @click.stop="handleFunctionClick(item)"
               >
-                {{ collectionMappings[item.name] ? '取消收藏' : '收藏' }}
+                <span class="label">
+                  {{ item.label }}
+                </span>
+                <div
+                  class="collection"
+                  @click.stop="onCollectClick(item)"
+                >
+                  <i class="el-icon-star-on" />
+                </div>
+              </div>
+              <div
+                class="nameBox"
+                @click="onNameClick(item.name)"
+              >
+                {{ item.name }}
               </div>
             </div>
-            <div class="nameBox">
-              {{ item.name }}
+          </div>
+          <el-empty
+            class="empty"
+            :image-size='80'
+            description="暂无收藏"
+            v-else
+          />
+          <el-skeleton
+            v-if="isCollectionLoading"
+          />
+        </div>
+        <div class="group">
+          <div class="group-title">
+            <div class="group-name">
+              Functions
+            </div>
+            <el-input
+              placeholder="请输入关键词"
+              prefix-icon="el-icon-search"
+              class="group-action"
+              v-model="functionKeyword"
+              @input="filterFunctions"
+            >
+            </el-input>
+          </div>
+          <div
+            class="group-body"
+            v-if="displayFunctions.length"
+          >
+            <div
+              class="group-item"
+              v-for="item in displayFunctions"
+            >
+              <div
+                class="labelBox"
+                @click.stop="onFunctionClick(item)"
+              >
+                <span class="label">
+                  {{ item.label }}
+                </span>
+                <div
+                  class="collection"
+                  @click="onCollectClick(item)"
+                >
+                  <i class="el-icon-star-on"
+                     v-if="collectionMappings[item.name]"
+                  />
+                  <i class="el-icon-star-off"
+                     v-else
+                  />
+                </div>
+              </div>
+              <div
+                class="nameBox"
+                @click="onNameClick(item.name)"
+              >
+                {{ item.name }}
+              </div>
             </div>
           </div>
+          <el-empty
+            class="empty"
+            image-size='80'
+            description="暂无云函数"
+            v-else
+          />
+          <el-skeleton
+            v-if="isFunctionLoading"
+          />
         </div>
-        <el-empty
-          class="empty"
-          image-size='80'
-          description="暂无云函数"
-          v-else
-        />
-      </div>
-      <div class="group">
-        <div class="group-title">
-          Database
-        </div>
-        <div
-          class="group-body"
-          v-if="databases.length"
-        >
-          <div
-            class="group-item"
-            v-for="item in databases"
-          >
-            <span>{{ item.name }}</span>
+        <div class="group">
+          <div class="group-title">
+            Database
           </div>
+          <div
+            class="group-body"
+            v-if="databases.length"
+          >
+            <div
+              class="group-item"
+              v-for="item in databases"
+              @click="onDatabaseClick(item)"
+            >
+              <span>{{ item.name }}</span>
+            </div>
+          </div>
+          <el-empty
+            class="empty"
+            image-size='80'
+            description="暂无云数据库"
+            v-else
+          />
+          <el-skeleton
+            v-if="isDatabaseLoading"
+          />
         </div>
-        <el-empty
-          class="empty"
-          image-size='80'
-          description="暂无云函数"
-          v-else
-        />
+      </div>
+      <div class="footer">
+        <div class="search">
+          <i class="el-icon-search" />
+          搜索函数全文
+        </div>
       </div>
     </div>
-
-    <div class="footer">
-      <div class="search">
-        <i class="el-icon-search"></i>
-        搜索函数全文
-      </div>
-    </div>
+    <search-component />
   </div>
 </template>
 
 <script>
 import { getCollections, getFunctions } from '@/api'
 import { getLocalStorage, setLocalStorage } from '@/utils/storage'
+import { databaseLink, functionLink } from '@/utils/links'
+import { initLafAppInfo } from '@/utils'
+
+import searchComponent from './Search.vue'
 
 export default {
   name: 'Nav',
-  props: {},
   components: {
-
+    searchComponent,
   },
   data() {
     return {
+      isFunctionLoading: true,
+      isCollectionLoading: true,
+      isDatabaseLoading: true,
+      appid: '',
       open: true,
       functions: [],
       collections: [],
       displayFunctions: [],
       functionKeyword: '',
-      databases: [],
+      databases: []
     }
   },
   computed: {
@@ -177,19 +202,31 @@ export default {
     }
   },
   mounted() {
-    getFunctions().then(res => {
-      console.log(res)
-      if (res.data) {
+    const appid = initLafAppInfo()
+    if (!appid) return
+    this.appid = appid
+    this.initFunctions(appid)
+    this.initDatabases(appid)
+  },
+  methods: {
+    initFunctions(appid) {
+      getFunctions(appid).then(res => {
+        if (!res.data) return
+        console.log(res)
         this.functions = res.data
         this.displayFunctions = res.data
         this.refreshCollections()
-      }
-    })
-    getCollections().then(res => {
-      this.databases = res || []
-    })
-  },
-  methods: {
+      }).finally(() => {
+        this.isFunctionLoading = false
+      })
+    },
+    initDatabases(appid) {
+      getCollections(appid).then(res => {
+        this.databases = res || []
+      }).finally(() => {
+        this.isDatabaseLoading = false
+      })
+    },
     toggle() {
       this.open = !this.open
     },
@@ -197,14 +234,12 @@ export default {
       console.log('onSearch')
     },
     onFunctionClick(fn) {
-      console.log('onFunctionClick', fn, this.$router)
-      const [, appid] = window.location.hash.match(/\/app\/(.*?)\/cloudfunction/) || []
-      if (appid) {
-        window.location.href = `/app-console/#/app/${appid}/cloudfunction/functions/${fn._id}`
-      }
+      if (fn.appid) window.location.href = functionLink(fn.appid, fn._id)
+    },
+    onDatabaseClick(fn) {
+      if (this.appid) window.location.href = databaseLink(this.appid)
     },
     filterFunctions() {
-      console.log('filterFunctions', this.functionKeyword)
       if (this.functionKeyword) {
         this.displayFunctions = this.functions.filter(item => {
           const nameMatch = item.name.indexOf(this.functionKeyword) > -1
@@ -220,6 +255,7 @@ export default {
       if (Array.isArray(collections)) {
         this.collections = this.functions.filter(item => collections.includes(item.name))
       }
+      this.isCollectionLoading = false
     },
     onCollectClick(item) {
       const res = getLocalStorage('collections')
@@ -233,9 +269,26 @@ export default {
       setLocalStorage('collections', collections)
       this.refreshCollections()
     },
+    fnDetailLink(fn) {
+      functionLink(fn.appid, fn._id)
+    },
+    handleFunctionClick(fn) {
+      this.$router.push({
+        path: this.fnDetailLink(fn)
+      })
+    },
+    onNameClick(message) {
+      this.$copyText(message).then(() => {
+        this.$message({
+          message: '复制成功',
+          type: 'success'
+        })
+      })
+    }
   }
 }
 </script>
+
 
 <style lang="less" scoped>
 @plan-width: 300px;
@@ -366,9 +419,11 @@ export default {
     align-content: center;
     justify-content: space-between;
     width: 100%;
+    font-size: 15px;
+    font-weight: bold;
 
     .collection {
-      font-size: 10px;
+      font-size: 16px;
       color: #aaa;
     }
   }
@@ -376,12 +431,16 @@ export default {
   .nameBox {
     font-size: 12px;
     max-width: @plan-width;
-    word-break: keep-all; /* 不换行 */
-    white-space: nowrap; /* 不换行 */
+    word-break: keep-all;
+    white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
     color: #999;
     margin-top: 6px;
+
+    &:hover {
+      color: #409eff;
+    }
   }
 }
 
