@@ -15,7 +15,7 @@
 + // @match        https://you-domain/app-console/*
 ```
 
-## 配置
+## 二次开发
 
 ### 本地开发
 ```
